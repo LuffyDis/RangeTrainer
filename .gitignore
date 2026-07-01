@@ -434,3 +434,6 @@ FodyWeavers.xsd
 
 # Claude Code session handoff (kept local, not versioned)
 SESSION-CONTEXT.md
+
+# Claude Code local settings (machine-specific permissions, not versioned)
+.claude/settings.local.json
