@@ -1,0 +1,78 @@
+name: Story
+description: A pullable unit of work (feature or enabler). See doc/sdlc.md.
+title: "Story <X.Y> — <name>"
+labels: ["story"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A story is the pull token on the board. It **references** `doc/` — it does
+        not copy it. Keep it small enough for a single PR. See `doc/sdlc.md`.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Feature delivers user value; enabler delivers a technical foundation.
+      options:
+        - feature
+        - enabler
+    validations:
+      required: true
+
+  - type: input
+    id: doc-reference
+    attributes:
+      label: doc/ reference
+      description: >
+        The element in doc/ this story references. A feature references
+        user-stories.md; an enabler references architecture.md / tech-stack.md /
+        sdlc.md. Every story must reference doc/.
+      placeholder: "user-stories.md FR3  ·  or  ·  architecture.md §2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: One sentence — what this story delivers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Testable conditions that define this story as done. These are story-specific (the DoD below is universal).
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope — in / out
+      description: >
+        In scope = the boundary of what is delivered. Out of scope = what is
+        deliberately excluded (the anti-sprawl guardrail). Point out-of-scope items
+        to their own future story where relevant.
+      value: |
+        **In scope:**
+        -
+
+        **Out of scope:**
+        -
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### Definition of Done
+        The **standard DoD** in `doc/sdlc.md §5` applies (tests green, required
+        checks pass, patch coverage, spec updated if any, and durable decisions
+        promoted back into `doc/`). It is referenced here, not copied.
