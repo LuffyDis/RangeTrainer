@@ -38,15 +38,10 @@ jobs:
               - '.github/workflows/**'
               - 'src/RangeTrainer.Client/**'
             apphost:
-              - 'src/RangeTrainer.SharedKernel/**'
               - 'Directory.Packages.props'
               - 'RangeTrainer.slnx'
               - '.github/workflows/**'
               - 'src/RangeTrainer.AppHost/**'
-              - 'src/RangeTrainer.Host/**'
-              - 'src/RangeTrainer.Client/**'
-              - 'src/RangeTrainer.ServiceDefaults/**'
-              - 'src/Modules/**'
 
   host:
     needs: changes
