@@ -59,7 +59,7 @@ jobs:
           dotnet-version: '10.0.x'
       - run: dotnet restore RangeTrainer.slnx
       - name: Build + test host
-        run: dotnet test tests/RangeTrainer.Host.Tests --configuration Release
+        run: dotnet test tests/RangeTrainer.Host.Tests --configuration Release --no-restore
 
   client:
     needs: changes
