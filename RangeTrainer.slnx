@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/RangeTrainer.AppHost/RangeTrainer.AppHost.csproj" />
+    <Project Path="src/RangeTrainer.Client/RangeTrainer.Client.csproj" />
+    <Project Path="src/RangeTrainer.Host/RangeTrainer.Host.csproj" />
+    <Project Path="src/RangeTrainer.ServiceDefaults/RangeTrainer.ServiceDefaults.csproj" />
+    <Project Path="src/RangeTrainer.SharedKernel/RangeTrainer.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RangeTrainer.Host.Tests/RangeTrainer.Host.Tests.csproj" />
+  </Folder>
+</Solution>

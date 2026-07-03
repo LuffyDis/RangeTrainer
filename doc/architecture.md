@@ -37,13 +37,28 @@
 
 ## 2. Starter Template & Scaffold
 
-**Selected approach:** `aspire-empty` + manual module setup. (`aspire-starter` generates
-Blazor *Server*, not WASM PWA; community modulith templates conflict with the Wolverine
-patterns below.)
+**Selected approach:** `aspire` (empty Aspire) + manual module setup. (`aspire-starter`
+generates Blazor *Server*, not WASM PWA; community modulith templates conflict with the
+Wolverine patterns below.)
+
+> **Scaffold is incremental (see `sdlc.md §7`).** The command list below is the *target*
+> full structure. It is **not** created up front: Story 0.1 stood up only the **spine**
+> — `AppHost`, `ServiceDefaults`, `Host`, `Client`, `SharedKernel`, one test project,
+> `Directory.Packages.props` (CPM) and a `.slnx` solution. The **3 modules** and the
+> **other test projects** are born with the feature story that first needs them.
+>
+> **Reality corrections (verified at scaffold time, .NET 10 / Aspire 13.x):**
+> - Template short names: `aspire-empty` → **`aspire`**, `aspire-test-xunit` → **`aspire-xunit`**.
+> - The Aspire templates ship with the SDK (no workload install) but target `net9.0` /
+>   Aspire `9.3.1`; `AppHost` + `ServiceDefaults` are retargeted to `net10.0` + Aspire `13.4.6`.
+> - The repo already *is* `RangeTrainer/`, so projects are created in place under `src/` —
+>   no subfolder + `mv` step.
+> - Authoritative pinned package versions live in the repo's **`Directory.Packages.props`**,
+>   not in the illustrative list in `tech-stack.md`.
 
 ```bash
 # 1. Create solution with Aspire (generates AppHost + ServiceDefaults)
-dotnet new aspire-empty --name RangeTrainer --output RangeTrainer
+dotnet new aspire --name RangeTrainer --output RangeTrainer
 cd RangeTrainer
 
 # 2. Move AppHost and ServiceDefaults under src/
@@ -76,7 +91,7 @@ dotnet sln add src/Modules/RangeTrainer.Modules.Study/RangeTrainer.Modules.Study
 # 8. Create Test Projects
 dotnet new xunit -o tests/RangeTrainer.Modules.RangeContext.Tests
 dotnet new xunit -o tests/RangeTrainer.Modules.Study.Tests
-dotnet new aspire-test-xunit -o tests/RangeTrainer.Tests.Shared
+dotnet new aspire-xunit -o tests/RangeTrainer.Tests.Shared
 dotnet new xunit -o tests/RangeTrainer.SystemTests
 dotnet new xunit -o tests/RangeTrainer.Client.Tests
 dotnet sln add tests/RangeTrainer.Modules.RangeContext.Tests/RangeTrainer.Modules.RangeContext.Tests.csproj
