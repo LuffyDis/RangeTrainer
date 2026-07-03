@@ -177,16 +177,16 @@ The pipeline mechanics are proven in a separate learning repo,
 per "rung", break the gate on purpose to understand it, one ADR line per rung).
 RangeTrainer **replays the kata on the real app, with Claude Code as the agent.**
 
-**Component model.** RangeTrainer ships **two components**, each built, versioned and
-deployed **independently** and published as its own image to **GHCR**:
+**Component model.** RangeTrainer is evolving toward **two components**, each built, versioned and
+deployed **independently** and published as its own image to **GHCR** (image build/push lands in Story 0.3 / 0.7):
 - **`host`** — the ASP.NET Core API (includes `ServiceDefaults` and the modules).
 - **`client`** — the Blazor WASM PWA, served standalone.
 
 `AppHost` is **dev-only** orchestration (Aspire) — it ships nothing; CI only checks it
 still compiles. This replays the kata's per-component pipeline faithfully and **reverses**
 architecture.md's "single container, API serves WASM" — to be reflected there when the
-images are built (Story 0.3 / 0.7). The solution still *builds* as one `.slnx`; it *ships*
-as two images.
+images are built (Story 0.3 / 0.7). The solution still *builds* as one `.slnx`; it will *ship*
+as two images once image build/push is implemented.
 
 **Kept from the kata (wholesale):**
 - GitHub Actions CI with **per-component path filters** (`dorny/paths-filter`) and an
