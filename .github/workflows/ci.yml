@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   # Detect which component(s) a PR touches, so each lane runs only when relevant.
