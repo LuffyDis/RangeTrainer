@@ -5,21 +5,100 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
-  build-test:
+  # Detect which component(s) a PR touches, so each lane runs only when relevant.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      host: ${{ steps.filter.outputs.host }}
+      client: ${{ steps.filter.outputs.client }}
+      apphost: ${{ steps.filter.outputs.apphost }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            host:
+              - 'src/RangeTrainer.SharedKernel/**'
+              - 'Directory.Packages.props'
+              - 'RangeTrainer.slnx'
+              - '.github/workflows/**'
+              - 'src/RangeTrainer.Host/**'
+              - 'src/RangeTrainer.ServiceDefaults/**'
+              - 'src/Modules/**'
+            client:
+              - 'src/RangeTrainer.SharedKernel/**'
+              - 'Directory.Packages.props'
+              - 'RangeTrainer.slnx'
+              - '.github/workflows/**'
+              - 'src/RangeTrainer.Client/**'
+            apphost:
+              - 'Directory.Packages.props'
+              - 'RangeTrainer.slnx'
+              - '.github/workflows/**'
+              - 'src/RangeTrainer.AppHost/**'
+
+  host:
+    needs: changes
+    if: ${{ needs.changes.outputs.host == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+      - run: dotnet restore RangeTrainer.slnx
+      - name: Build + test host
+        run: dotnet test tests/RangeTrainer.Host.Tests --configuration Release --no-restore
 
-      - name: Restore
-        run: dotnet restore RangeTrainer.slnx
+  client:
+    needs: changes
+    if: ${{ needs.changes.outputs.client == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore RangeTrainer.slnx
+      - name: Build client
+        run: dotnet build src/RangeTrainer.Client --configuration Release --no-restore
 
-      - name: Build
-        run: dotnet build RangeTrainer.slnx --configuration Release --no-restore
+  # Dev-only orchestration: validate it still compiles, but it ships nothing.
+  apphost:
+    needs: changes
+    if: ${{ needs.changes.outputs.apphost == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore RangeTrainer.slnx
+      - name: Build apphost
+        run: dotnet build src/RangeTrainer.AppHost --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test RangeTrainer.slnx --configuration Release --no-build
+  # Aggregate gate: the single required check. Red if any lane failed; a skipped
+  # lane (path not touched) is fine, so doc-only PRs still get a green ci.
+  ci:
+    needs: [changes, host, client, apphost]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify no lane failed
+        env:
+          RESULTS: ${{ needs.changes.result }} ${{ needs.host.result }} ${{ needs.client.result }} ${{ needs.apphost.result }}
+        run: |
+          echo "lane results: $RESULTS"
+          for r in $RESULTS; do
+            if [ "$r" = "failure" ] || [ "$r" = "cancelled" ]; then
+              echo "::error::A required lane did not pass."
+              exit 1
+            fi
+          done
+          echo "All lanes passed or were skipped."
