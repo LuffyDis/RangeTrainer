@@ -1,0 +1,42 @@
+name: Epic
+description: A group of stories delivering a coherent capability. See doc/sdlc.md.
+title: "Epic <N> — <name>"
+labels: ["epic"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An epic groups stories into one coherent capability. It is **not** a story:
+        no acceptance criteria, no in/out scope, no PR of its own. Its child stories
+        carry the work and are linked as **sub-issues**. See `doc/sdlc.md §3`.
+
+  - type: input
+    id: doc-reference
+    attributes:
+      label: doc/ reference
+      description: >
+        The element in doc/ this epic groups. A product epic references
+        user-stories.md; Epic 0 references architecture.md / sdlc.md.
+      placeholder: "user-stories.md Epic 1 — Identity  ·  or  ·  sdlc.md §3 (Epic 0)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: intent
+    attributes:
+      label: Intent
+      description: One paragraph — the capability this epic delivers and why it hangs together.
+    validations:
+      required: true
+
+  - type: textarea
+    id: stories
+    attributes:
+      label: Stories
+      description: >
+        The child stories, linked as sub-issues once they exist. This list is a
+        convenience view — the sub-issue relationship is the source of truth.
+      value: |
+        - [ ] #
+    validations:
+      required: false
