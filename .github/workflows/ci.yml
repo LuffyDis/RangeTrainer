@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore RangeTrainer.slnx
+
+      - name: Build
+        run: dotnet build RangeTrainer.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test RangeTrainer.slnx --configuration Release --no-build
