@@ -177,11 +177,25 @@ The pipeline mechanics are proven in a separate learning repo,
 per "rung", break the gate on purpose to understand it, one ADR line per rung).
 RangeTrainer **replays the kata on the real app, with Claude Code as the agent.**
 
+**Component model.** RangeTrainer ships **two components**, each built, versioned and
+deployed **independently** and published as its own image to **GHCR**:
+- **`host`** — the ASP.NET Core API (includes `ServiceDefaults` and the modules).
+- **`client`** — the Blazor WASM PWA, served standalone.
+
+`AppHost` is **dev-only** orchestration (Aspire) — it ships nothing; CI only checks it
+still compiles. This replays the kata's per-component pipeline faithfully and **reverses**
+architecture.md's "single container, API serves WASM" — to be reflected there when the
+images are built (Story 0.3 / 0.7). The solution still *builds* as one `.slnx`; it *ships*
+as two images.
+
 **Kept from the kata (wholesale):**
-- GitHub Actions CI with **path filters** and an **aggregate `ci` gate** (one
-  required check that aggregates the rest).
-- **nbgv** versioning by git-height → image tag.
-- **Ruleset-as-code** on `main`: the `ci` check is required and AI-agnostic.
+- GitHub Actions CI with **per-component path filters** (`dorny/paths-filter`) and an
+  **aggregate `ci` gate** (one required check that is red if any lane failed, green when
+  the untouched lanes are skipped).
+- **nbgv** versioning by git-height → image tag, **per component** (one version stream each).
+- **Ruleset-as-code** on `main` (`.github/rulesets/main.json`, applied via `gh api`):
+  PR required, the `ci` check required, force-push and deletion blocked, enforced for
+  everyone (admins included) — AI-agnostic, whatever opens a PR passes the same gate.
 - **GitHub Deployment** objects for traceable deploys.
 - **Contract tests** (PactNet).
 
